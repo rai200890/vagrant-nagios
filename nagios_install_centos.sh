@@ -45,9 +45,5 @@ chkconfig --level 35 httpd on
 touch /var/www/html/index.html
 chmod 755 /var/www/html/index.html
 #Inicia o Nagios
-#cp /vagrant/conf_files/group /etc/group
-#chown nagios.nagcmd /usr/local/nagios/var/rw
-#chmod g+rwx /usr/local/nagios/var/rw
-#chmod g+s /usr/local/nagios/var/rw
 sudo service httpd restart
 sudo service nagios restart
