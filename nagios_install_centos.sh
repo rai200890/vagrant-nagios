@@ -1,26 +1,24 @@
-#Instala as dependências do Nagios 
-yum install -y epel-release
-yum install -y gd gd-devel wget httpd php gcc make perl tar sendmail supervisors
-yum install -y wget make httpd php php-cli gcc glibc glibc-common gd gd-devel net-snmp
+#Instala as dependências do Nagios
+yum install -y epel-release gd gd-devel wget httpd php gcc make perl tar sendmail supervisors php-cli glibc glibc-common net-snmp openssl-devel
+yum install -y bind-utils
+yum install -y gcc make imake binutils cpp postgresql-devel mysql-libs mysql-devel openssl openssl-devel pkgconfig gd gd-devel gd-progs libpng libpng-devel libjpeg libjpeg-devel perl perl-devel net-snmp net-snmp-devel net-snmp-perl net-snmp-utils httpd php
+#yum install -y wget httpd php gcc glibc glibc-common gd gd-devel make net-snmp
 sudo service httpd start
 #Cria o usuário nagios e grupo nagcmd 
 sudo useradd nagios
 sudo groupadd nagcmd 
-#Adiciona o usuário nagios ao grupo nagcmd 
+#Adiciona o usuário nagios ao grupo nagcmd
 usermod -a -G nagcmd nagios
-usermod -a -G nagcmd apache 
-#Cria o diretório para armazenar os fontes para a instalação 
-mkdir downloads
-cd downloads
+usermod -a -G nagcmd apache
 #Download dos fontes
-#verificar se é possivel clonar repositório do git nesse scripts
+cd /tmp
 wget http://prdownloads.sourceforge.net/sourceforge/nagios/nagios-4.0.8.tar.gz
 wget https://www.nagios-plugins.org/download/nagios-plugins-2.0.3.tar.gz
 # Extração dos fontes
 tar -xzvf nagios-4.0.8.tar.gz
 tar -xzvf nagios-plugins-2.0.3.tar.gz
 #Instalação do nagios-core
-cd nagios-4.0.8
+cd /tmp/nagios-4.0.8
 ./configure --with-command-group=nagcmd
 make all
 make install
@@ -28,33 +26,31 @@ make install-init
 make install-config
 make install-commandmode
 make install-webconf
-cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
-chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
-/usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
-/etc/init.d/nagios start
-/etc/init.d/httpd start 
+sudo cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
+sudo chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
+sudo /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
+sudo /etc/init.d/nagios start
+sudo /etc/init.d/httpd start
 #Cria usuário para acesso WEB no Nagios
 htpasswd -b -c /usr/local/nagios/etc/htpasswd.users nagiosadmin nagiosadmin
 #Inicia o Apache
-service httpd start 
+sudo service httpd start
 #Instalação dos plugins do Nagios 
-cd nagios-plugins-2.0.3
-yum install -y openssl-devel
-sudo ./configure --with-nagios-user=nagios --with-nagios-group=nagios
-sudo make
-sudo make install 
-#Adicionando o Nagios e Apache, para iniciar junto com o sistema 
+cd /tmp/nagios-plugins-2.0.3
+./configure --with-nagios-user=nagios --with-nagios-group=nagios
+make
+make install
+#Adicionando o Nagios e Apache, para iniciar junto com o sistema
 chkconfig --add nagios
 chkconfig --level 35 nagios on
 chkconfig --add httpd
 chkconfig --level 35 httpd on
-chkconfig --add nagios
-chkconfig nagios on
 touch /var/www/html/index.html
 chmod 755 /var/www/html/index.html
 #Inicia o Nagios
-cp /vagrant/conf_files/group /etc/group
-chown nagios.nagcmd /usr/local/nagios/var/rw
-chmod g+rwx /usr/local/nagios/var/rw
-chmod g+s /usr/local/nagios/var/rw
+#cp /vagrant/conf_files/group /etc/group
+#chown nagios.nagcmd /usr/local/nagios/var/rw
+#chmod g+rwx /usr/local/nagios/var/rw
+#chmod g+s /usr/local/nagios/var/rw
+sudo service httpd restart
 sudo service nagios restart
