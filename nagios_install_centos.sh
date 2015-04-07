@@ -1,8 +1,5 @@
 #Instala as dependências do Nagios
-yum install -y epel-release gd gd-devel wget httpd php gcc make perl tar sendmail supervisors php-cli glibc glibc-common net-snmp openssl-devel
-yum install -y bind-utils
-yum install -y gcc make imake binutils cpp postgresql-devel mysql-libs mysql-devel openssl openssl-devel pkgconfig gd gd-devel gd-progs libpng libpng-devel libjpeg libjpeg-devel perl perl-devel net-snmp net-snmp-devel net-snmp-perl net-snmp-utils httpd php
-#yum install -y wget httpd php gcc glibc glibc-common gd gd-devel make net-snmp
+yum install -y epel-release gd gd-devel wget httpd php gcc make perl tar sendmail supervisors php-cli glibc glibc-common net-snmp openssl-devel bind-utils imake binutils cpp postgresql-devel mysql-libs mysql-devel openssl pkgconfig gd-progs libpng libpng-devel libjpeg libjpeg-devel perl-devel net-snmp-devel net-snmp-perl net-snmp-utils
 sudo service httpd start
 #Cria o usuário nagios e grupo nagcmd 
 sudo useradd nagios
